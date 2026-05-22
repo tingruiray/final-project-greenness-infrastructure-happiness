@@ -1,25 +1,23 @@
 #!/usr/bin/env bash
-# Corrected worker assignment.
-# Note: sha-nxi_ndvi_s3.txt -> Shanxi; shanxi_ndvi_s3.txt -> Shaanxi.
+# Auto-generated worker assignment.
+# Use matching indices: PROVINCES[i] corresponds to MANIFESTS[i].
+
 PROVINCES=(
   "Gansu"
   "Sichuan"
-  "Jilin"
+  "Hubei"
   "Jiangxi"
   "Henan"
   "Jiangsu"
-  "Tianjin"
   "Shanghai"
 )
 
 MANIFESTS=(
   "gansu_ndvi_s3.txt"
   "sichuan_ndvi_s3.txt"
-  "jilin_ndvi_s3.txt"
+  "hubei_ndvi_s3.txt"
   "jiangxi_ndvi_s3.txt"
   "henan_ndvi_s3.txt"
   "jiangsu_ndvi_s3.txt"
-  "tianjing_ndvi_s3.txt"
   "shanghai_ndvi_s3.txt"
 )
-

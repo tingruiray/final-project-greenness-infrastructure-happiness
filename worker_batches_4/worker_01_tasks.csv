@@ -1,9 +1,0 @@
-worker,province,manifest_file,ndvi_links
-worker_01,Gansu,gansu_ndvi_s3.txt,2523
-worker_01,Sichuan,sichuan_ndvi_s3.txt,702
-worker_01,Jilin,jilin_ndvi_s3.txt,434
-worker_01,Jiangxi,jiangxi_ndvi_s3.txt,288
-worker_01,Henan,henan_ndvi_s3.txt,198
-worker_01,Jiangsu,jiangsu_ndvi_s3.txt,147
-worker_01,Tianjin,tianjing_ndvi_s3.txt,38
-worker_01,Shanghai,shanghai_ndvi_s3.txt,14

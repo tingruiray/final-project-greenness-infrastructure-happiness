@@ -383,7 +383,7 @@ Shanghai_annual_ndvi_2018.csv
 ```
 
 
-## Scaling plan after Shanghai
+## Scaling 
 
 After this test, the same logic can be scaled by assigning each province to a separate task:
 
@@ -403,12 +403,21 @@ A task can be represented as JSON:
 }
 ```
 
-For the full project, use either:
+The full-scale AWS pipeline is now operational and has been validated end-to-end. Province-level NDVI tasks were successfully enqueued into the SQS queue ndvi-province-tasks, with each message containing the province name, the corresponding NDVI S3 manifest, the boundary file location, the processing script location, and the intended S3 output folder. An EC2 worker was then launched with the required geospatial Python environment and IAM permissions. The worker successfully polled tasks from SQS, downloaded the processing script, China ADM1 boundary file, and province-specific NDVI manifest from s3://final-project-ndvi/, used temporary NASA Earthdata S3 credentials to download the required HLS-VI .NDVI.tif files from lp-prod-protected, ran the province-level NDVI processing script, uploaded the resulting daily and annual NDVI CSV files back to S3, and deleted the SQS message only after successful completion. Beijing was successfully processed, producing Beijing_annual_ndvi_2018.csv and related diagnostic files under s3://final-project-ndvi/outputs/beijing/. This confirms that the distributed SQS–EC2–S3 workflow works as intended: province tasks can be scheduled through SQS, processed independently by EC2 workers, and stored as province-level NDVI outputs in S3. For larger provinces, the same pipeline remains valid, though larger-memory workers or the multi-CRS patched script may be needed to handle heavier mosaicking workloads.
 
-```text
-Option 1: one EC2 instance processing provinces sequentially
-Option 2: multiple EC2 workers, each assigned a subset of provinces
-Option 3: SQS queue where each message is one province-year NDVI task
-```
 
-The Shanghai test validates the computational core needed for those scaled versions.
+
+
+set +o history
+
+aws configure set aws_access_key_id "ASIAZLX6ZES4RJULY7KC" --profile nasa
+aws configure set aws_secret_access_key "GscNO5kMDa9d128d+6P2zjOzbRGkCogGNb40H6Bm" --profile nasa
+aws configure set aws_session_token "IQoJb3JpZ2luX2VjEFkaCXVzLXdlc3QtMiJIMEYCIQDyMa0kE7cVgVCChThhR+eKoojKJUKBHVlQTpVvfF3qcgIhAKzB2csBgXYebBbLoNJ5/qJdHB2PMHRFwh36n6G+NrySKoIDCCIQAxoMNjQzNzA1Njc2OTg1IgxJTKis8jWBb6SMRdcq3wKp8LzrASBJ1mAZ4kKktOqC17DIGUkqzCTJ2T42YroCQnwuSsFSCeMqxmUt9KcnCAdVdnvK//qUipkHigdulIN+Y0my+gJlhU03bz5DIILGShrLClvzu5Z1ZMFViJDyl7cQdaBq9KfnNHjQ2pRbPxnhKPdSjAaOyy9ddQ+tp64Caizt/BY2+T3encPu9fc5W0Q4o2q8y4tVTuhRzF4l/DWgk+raIWRS6TElyjOcL5IfnzeqLDVcgl5CV6E4sz8FlVRIAf61CAG6QV5AXNZkC0g+HAk4MZBoda0pZlUA8dje6JVvVB6bpNKPMvuIQcAnsA3537JfV/ZXcHnqDk6KJ+yaRjN7MLQnnLsL1Ke5UcErpyRBYAmRTnd0vOQJLO06rc4EvPkGjLi3VRkTrDMn8jk81NPtCZ1jwAnTJvKoWUDD0CxgfoKaaI1LFgIgfNNYvcD6vAW65aNe86kwDQsRUnkw44fC0AY6nAEIDM4m6oGIq5EIJWTM5+h3WeD3iiS9EEHShVXW6Fk7T7BhI+uAIG1mEvaOjO/b8KrtrrZafi2Gv4bOgYxTUTbnzWWUZRIBvxIL1tg24A/ASknO7Au4JN/n3eu1a+bUS2N4oHl97oBr+lt/vTFfDonJBP09cOqW6RT4NsWGCfzG1QGVryVZTXWgdzMqT5xU7MLsQFrHcfuCcgXvG1U=" --profile nasa
+aws configure set region us-west-2 --profile nasa
+
+set -o history
+
+
+
+
+https://sqs.us-east-1.amazonaws.com/891377197146/ndvi-province-tasks

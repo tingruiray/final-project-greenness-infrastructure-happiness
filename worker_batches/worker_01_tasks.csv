@@ -1,0 +1,7 @@
+worker,province,manifest_file,ndvi_links,key
+worker_01,Inner Mongolia,neimenggu_ndvi_s3.txt,3267,neimenggu
+worker_01,Jilin,jilin_ndvi_s3.txt,434,jilin
+worker_01,Hunan,hunan_ndvi_s3.txt,256,hunan
+worker_01,Zhejiang,zhejiang_ndvi_s3.txt,201,zhejiang
+worker_01,Chongqing,chongqing_ndvi_s3.txt,143,chongqing
+worker_01,Tianjin,tianjing_ndvi_s3.txt,38,tianjing

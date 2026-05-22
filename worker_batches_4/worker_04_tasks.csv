@@ -1,9 +1,0 @@
-worker,province,manifest_file,ndvi_links
-worker_04,Heilongjiang,heilongjiang_ndvi_s3.txt,1359
-worker_04,Shaanxi,shanxi_ndvi_s3.txt,1128
-worker_04,Qinghai,qinghai_ndvi_s3.txt,923
-worker_04,Guangdong,guangdong_ndvi_s3.txt,330
-worker_04,Guizhou,guizhou_ndvi_s3.txt,204
-worker_04,Zhejiang,zhejiang_ndvi_s3.txt,201
-worker_04,Hebei,hebei_ndvi_s3.txt,100
-worker_04,Liaoning,liaoning_ndvi_s3.txt,100

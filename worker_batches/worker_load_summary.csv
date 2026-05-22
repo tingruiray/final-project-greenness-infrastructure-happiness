@@ -1,0 +1,5 @@
+worker,n_tasks,ndvi_links,provinces
+worker_01,6,4339,Inner Mongolia; Jilin; Hunan; Zhejiang; Chongqing; Tianjin
+worker_02,7,4317,Gansu; Sichuan; Hubei; Jiangxi; Henan; Jiangsu; Shanghai
+worker_03,8,4362,Xinjiang; Yunnan; Shanxi; Ningxia; Guangxi; Fujian; Anhui; Beijing
+worker_04,8,4360,Heilongjiang; Shaanxi; Qinghai; Guangdong; Shandong; Guizhou; Hebei; Liaoning

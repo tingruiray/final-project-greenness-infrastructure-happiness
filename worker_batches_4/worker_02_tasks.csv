@@ -1,6 +1,0 @@
-worker,province,manifest_file,ndvi_links
-worker_02,Inner Mongolia,neimenggu_ndvi_s3.txt,3267
-worker_02,Ningxia,ningxia_ndvi_s3.txt,438
-worker_02,Hunan,hunan_ndvi_s3.txt,256
-worker_02,Shandong,shandong_ndvi_s3.txt,216
-worker_02,Fujian,fujian_ndvi_s3.txt,167

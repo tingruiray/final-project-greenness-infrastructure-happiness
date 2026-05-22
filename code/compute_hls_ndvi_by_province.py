@@ -84,7 +84,18 @@ def select_target_boundary(
         raise ValueError("Boundary file was read successfully but contains no rows.")
 
     col = choose_name_column(adm1, name_col)
-    target = adm1[adm1[col].astype(str).str.contains(province, case=False, na=False)].copy()
+    # Boundary-name aliases for nonstandard labels in this ADM1 file.
+    # In this boundary file, Guangdong appears as "Guangzhou Province".
+    boundary_aliases = {
+        "Guangdong": "Guangzhou",
+    }
+
+    search_name = province
+    target = adm1[adm1[col].astype(str).str.contains(search_name, case=False, na=False)].copy()
+
+    if target.empty and province in boundary_aliases:
+        search_name = boundary_aliases[province]
+        target = adm1[adm1[col].astype(str).str.contains(search_name, case=False, na=False)].copy()
 
     if target.empty:
         names = sorted(adm1[col].dropna().astype(str).unique().tolist())
@@ -232,79 +243,104 @@ def compute_daily_mean_for_date(
     group: pd.DataFrame,
     target_boundary: gpd.GeoDataFrame,
 ) -> dict:
-    """Mosaic all same-date tiles, clip to target boundary, and compute mean NDVI."""
+    """
+    Compute daily province mean NDVI.
+
+    This version supports provinces whose same-date tiles span multiple CRS/UTM zones.
+    It processes same-date rasters by CRS group, clips each CRS-group mosaic to the
+    province boundary, and combines valid-pixel sums and counts across CRS groups.
+    """
     paths = list(group["path"])
 
-    with ExitStack() as stack:
-        srcs = [stack.enter_context(rasterio.open(path)) for path in paths]
+    total_sum = 0.0
+    total_sumsq = 0.0
+    total_count = 0
 
-        crs_set = {str(src.crs) for src in srcs}
-        if len(crs_set) != 1:
-            raise ValueError(
-                f"Date {date.date()} has rasters in multiple CRS: {crs_set}. "
-                "For Shanghai this should usually not happen. "
-                "If it happens for larger provinces, reproject tiles before mosaicking."
-            )
+    crs_groups_processed = []
+    per_crs_debug = []
 
-        crs = srcs[0].crs
-        target_proj = target_boundary.to_crs(crs)
-        geoms = list(target_proj.geometry)
+    # Open each raster once to identify its CRS.
+    crs_to_paths = {}
+    for path in paths:
+        with rasterio.open(path) as src:
+            crs_key = str(src.crs)
+        crs_to_paths.setdefault(crs_key, []).append(path)
 
-        # Mosaic same-date tiles. Overlapping pixels are taken from the first valid source.
-        mosaic, out_transform = merge(srcs, nodata=FILL_VALUE)
+    for crs_key, crs_paths in crs_to_paths.items():
+        with ExitStack() as stack:
+            srcs = [stack.enter_context(rasterio.open(path)) for path in crs_paths]
 
-        profile = srcs[0].profile.copy()
-        profile.update({
-            "height": mosaic.shape[1],
-            "width": mosaic.shape[2],
-            "transform": out_transform,
-            "nodata": FILL_VALUE,
-            "count": 1,
-        })
+            crs = srcs[0].crs
+            target_proj = target_boundary.to_crs(crs)
+            geoms = list(target_proj.geometry)
 
-        # Clip the mosaic to the target province boundary.
-        with MemoryFile() as memfile:
-            with memfile.open(**profile) as dataset:
-                dataset.write(mosaic)
-                clipped, _ = mask(
-                    dataset,
-                    geoms,
-                    crop=True,
-                    filled=False,
-                    nodata=FILL_VALUE,
-                )
+            # Mosaic same-date tiles within this CRS only.
+            mosaic, out_transform = merge(srcs, nodata=FILL_VALUE)
 
-    raw = np.ma.array(clipped[0], dtype="float32")
+            profile = srcs[0].profile.copy()
+            profile.update({
+                "height": mosaic.shape[1],
+                "width": mosaic.shape[2],
+                "transform": out_transform,
+                "nodata": FILL_VALUE,
+                "count": 1,
+            })
 
-    # HLS-VI fill value.
-    raw = np.ma.masked_equal(raw, FILL_VALUE)
+            # Clip the CRS-specific mosaic to the target province boundary.
+            with MemoryFile() as memfile:
+                with memfile.open(**profile) as dataset:
+                    dataset.write(mosaic)
+                    clipped, clipped_transform = mask(
+                        dataset,
+                        geoms,
+                        crop=True,
+                        filled=False,
+                        nodata=FILL_VALUE,
+                    )
 
-    # Apply HLS-VI scale factor.
-    ndvi = raw * SCALE_FACTOR
+        raw = np.ma.array(clipped[0], dtype="float32")
 
-    # Remove impossible values and any remaining invalid pixels.
-    ndvi = np.ma.masked_invalid(ndvi)
-    ndvi = np.ma.masked_outside(ndvi, -1, 1)
+        # HLS-VI fill value.
+        raw = np.ma.masked_equal(raw, FILL_VALUE)
 
-    n_valid_pixels = int(ndvi.count())
+        # Apply HLS-VI scale factor.
+        ndvi = raw * SCALE_FACTOR
 
-    if n_valid_pixels == 0:
+        # Remove impossible values and any remaining invalid pixels.
+        ndvi = np.ma.masked_invalid(ndvi)
+        ndvi = np.ma.masked_outside(ndvi, -1, 1)
+
+        n_valid = int(ndvi.count())
+
+        if n_valid > 0:
+            vals = ndvi.compressed().astype("float64")
+            total_sum += float(vals.sum())
+            total_sumsq += float((vals ** 2).sum())
+            total_count += n_valid
+
+        crs_groups_processed.append(crs_key)
+        per_crs_debug.append(f"{crs_key}:{len(crs_paths)}files:{n_valid}valid")
+
+    if total_count == 0:
         mean_ndvi = np.nan
         sd_ndvi = np.nan
     else:
-        mean_ndvi = float(ndvi.mean())
-        sd_ndvi = float(ndvi.std())
+        mean_ndvi = total_sum / total_count
+        variance = max(total_sumsq / total_count - mean_ndvi ** 2, 0.0)
+        sd_ndvi = float(np.sqrt(variance))
 
     return {
         "date": date.date().isoformat(),
         "n_tiles": len(paths),
         "tiles": ",".join(sorted(group["tile"].unique())),
+        "n_crs_groups": len(crs_groups_processed),
+        "crs_groups": ",".join(sorted(crs_groups_processed)),
         "mean_ndvi": mean_ndvi,
         "sd_ndvi": sd_ndvi,
-        "n_valid_pixels": n_valid_pixels,
+        "n_valid_pixels": int(total_count),
+        "per_crs_debug": "|".join(per_crs_debug),
         "files": "|".join([p.name for p in paths]),
     }
-
 
 def compute_ndvi(
     hls_dir: Path,

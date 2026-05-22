@@ -20,9 +20,9 @@ Default behavior:
       worker_XX_manifest_files.txt, worker_XX_arrays.sh, and summary CSVs
 
 Example:
-    python assign_ndvi_worker_batches.py ^
-      --manifest-dir "C:\\Users\\26540\\Desktop\\学习\\Uchicago\\final-project-greenness-infrastructure-happiness\\satellite_data\\ndvi_manifests" ^
-      --out-dir "C:\\Users\\26540\\Desktop\\学习\\Uchicago\\final-project-greenness-infrastructure-happiness\\worker_batches" ^
+    python assign_ndvi_worker_batches.py `
+      --manifest-dir "C:\\Users\\26540\\Desktop\\学习\\Uchicago\\final-project-greenness-infrastructure-happiness\\satellite_data" `
+      --out-dir "C:\\Users\\26540\\Desktop\\学习\\Uchicago\\final-project-greenness-infrastructure-happiness\\worker_batches" `
       --n-workers 4
 """
 
@@ -76,7 +76,7 @@ PROVINCE_NAME_MAP = {
 }
 
 
-DEFAULT_DROP_KEYS = {"shenzhen"}
+DEFAULT_DROP_KEYS = {"shenzhen"} # In 2018 cgss but not in satellite data
 
 
 @dataclass(frozen=True)

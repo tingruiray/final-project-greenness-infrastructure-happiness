@@ -1,0 +1,8 @@
+heilongjiang_ndvi_s3.txt
+shanxi_ndvi_s3.txt
+qinghai_ndvi_s3.txt
+guangdong_ndvi_s3.txt
+guizhou_ndvi_s3.txt
+zhejiang_ndvi_s3.txt
+hebei_ndvi_s3.txt
+liaoning_ndvi_s3.txt

@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,total_inside_pixel_observations,mean_valid_pixel_coverage,min_valid_pixel_coverage,max_valid_pixel_coverage,max_daily_crs_groups,total_chunks_processed,min_daily_ndvi,max_daily_ndvi
+Inner Mongolia,2018,314,3267,0.17872638729757603,0.18996259412332797,19069378294,34493384885,0.5403566486876841,0.012421863321606252,1.0,5,11910,-0.016728282006948116,0.7086498126971484

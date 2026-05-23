@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,total_inside_pixel_observations,mean_valid_pixel_coverage,min_valid_pixel_coverage,max_valid_pixel_coverage,max_daily_crs_groups,total_chunks_processed,min_daily_ndvi,max_daily_ndvi
+Jiangsu,2018,41,147,0.340949699301117,0.3351839578084889,562434295,1028314044,0.5955292414242646,0.18503540431117377,0.9860825775417147,2,481,0.012526137024718826,0.5053795204680075

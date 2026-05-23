@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,min_daily_ndvi,max_daily_ndvi
+Guangxi,2018,51,301,0.6879731281808731,0.7164356584539954,1446225274,0.3622839450875458,0.8049149771539497

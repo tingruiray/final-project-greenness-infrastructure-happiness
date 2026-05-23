@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,min_daily_ndvi,max_daily_ndvi
+Hubei,2018,78,445,0.5108168045142325,0.510444521882912,1544474719,0.14552345118686108,0.8633743344709899

@@ -1,9 +1,0 @@
-worker,province,manifest_file,ndvi_links,key
-worker_03,Xinjiang,xinjiang_ndvi_s3.txt,1775,xinjiang
-worker_03,Yunnan,yunnan_ndvi_s3.txt,978,yunnan
-worker_03,Shanxi,sha-nxi_ndvi_s3.txt,476,sha-nxi
-worker_03,Ningxia,ningxia_ndvi_s3.txt,438,ningxia
-worker_03,Guangxi,guangxi_ndvi_s3.txt,301,guangxi
-worker_03,Fujian,fujian_ndvi_s3.txt,167,fujian
-worker_03,Anhui,anhui_ndvi_s3.txt,154,anhui
-worker_03,Beijing,beijing_ndvi_s3.txt,73,beijing

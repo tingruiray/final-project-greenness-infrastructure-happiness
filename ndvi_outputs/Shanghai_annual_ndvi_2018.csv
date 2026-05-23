@@ -1,2 +1,0 @@
-province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,min_daily_ndvi,max_daily_ndvi
-Shanghai,2018,7,14,0.10251746740084512,0.30400790009915296,24606438,-0.5241642857142857,0.49969210243354517

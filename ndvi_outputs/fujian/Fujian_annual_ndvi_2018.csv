@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,total_inside_pixel_observations,mean_valid_pixel_coverage,min_valid_pixel_coverage,max_valid_pixel_coverage,max_daily_crs_groups,total_chunks_processed,min_daily_ndvi,max_daily_ndvi
+Fujian,2018,32,167,0.6981070352838327,0.6998522163944778,724705244,1235438550,0.5177124077180425,0.021906222938875453,0.9625224051316522,2,462,0.5209974173463129,0.8197773423543122

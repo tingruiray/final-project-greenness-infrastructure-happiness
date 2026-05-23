@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,total_inside_pixel_observations,mean_valid_pixel_coverage,min_valid_pixel_coverage,max_valid_pixel_coverage,max_daily_crs_groups,total_chunks_processed,min_daily_ndvi,max_daily_ndvi
+Tianjin,2018,29,38,0.2684206814986083,0.3139154963335281,55918138,102081784,0.6283309106015887,0.0034019658128604776,0.9970795431944982,1,82,0.14579563519619843,0.5357645756054993

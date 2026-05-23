@@ -1,0 +1,2 @@
+province,year,n_valid_dates,n_ndvi_files_used,mean_ndvi_equal_day,mean_ndvi_pixel_weighted,total_valid_pixel_observations,total_inside_pixel_observations,mean_valid_pixel_coverage,min_valid_pixel_coverage,max_valid_pixel_coverage,max_daily_crs_groups,total_chunks_processed,min_daily_ndvi,max_daily_ndvi
+Jilin,2018,104,434,0.35763166158504917,0.35896538287443264,2257319672,3807858767,0.5581764171474629,0.014446834378471742,0.9981004149862646,2,1488,0.01017567964207283,0.8831574738304105

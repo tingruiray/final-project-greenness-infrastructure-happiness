@@ -1,0 +1,9 @@
+outcome_label,spec_label,estimate,std_error,p_value,n,r2,cov_type
+Happiness,NDVI only,-2.3e-05,5.5e-05,0.6864,11061,0.0002,cluster_by_province
+Happiness,+ demographics,1.9e-05,4.3e-05,0.671,11061,0.0227,cluster_by_province
+Happiness,+ income,4.3e-05,3.9e-05,0.2843,9864,0.041,cluster_by_province
+Happiness,+ full controls,5.1e-05,3.3e-05,0.1312,9854,0.1055,cluster_by_province
+Log WTP for air quality,NDVI only,-3.9e-05,4.2e-05,0.353,11061,0.0003,cluster_by_province
+Log WTP for air quality,+ demographics,-2.9e-05,3.7e-05,0.4499,11061,0.0109,cluster_by_province
+Log WTP for air quality,+ income,-1.9e-05,4e-05,0.6439,9864,0.0113,cluster_by_province
+Log WTP for air quality,+ full controls,-4e-06,4e-05,0.9227,9854,0.0131,cluster_by_province

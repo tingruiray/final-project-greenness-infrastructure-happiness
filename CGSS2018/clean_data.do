@@ -176,5 +176,4 @@ order ///
 compress
 
 keep if !missing(happiness, wtp_air3, age, female, educ_years, health, rural_hukou, married)
-export delimited using "CGSS2018_clean_main.csv", replace
-
+export delimited using "CGSS2018_clean_main.csv", replace nolabel

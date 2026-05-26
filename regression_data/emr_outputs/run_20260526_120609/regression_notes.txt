@@ -1,0 +1,29 @@
+CGSS-NDVI regression notes
+
+Year: 2018
+CGSS input: s3://final-project-ndvi/regression/input/cgss/CGSS2018_clean_main.csv
+NDVI input: s3://final-project-ndvi/regression/input/ndvi/ndvi_province_annual_2018.csv
+Output: s3://final-project-ndvi/regression/output/run_20260526_120609
+
+Main treatment:
+  mean_ndvi, province-level annual average NDVI.
+
+Main outcomes:
+  happiness
+  ln_wtp_air3 when available, otherwise log(wtp_air3 + 1).
+
+Default specifications:
+  spec0_ndvi_only: outcome ~ mean_ndvi
+  spec1_demographics: + age, age^2, female, minority, education
+  spec2_income: + log personal/household income controls where available
+  spec3_full_controls: + health, hukou, marriage, CCP membership, community type where available
+
+Province fixed effects are intentionally excluded because the NDVI variable is
+measured at the province-year level and CGSS is a single 2018 cross-section.
+Including province fixed effects would absorb the main NDVI regressor.
+
+Primary inference table:
+  regression_results_statsmodels_clustered.csv
+
+Spark ML coefficient table:
+  regression_results_spark_ml.csv

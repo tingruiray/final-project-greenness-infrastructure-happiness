@@ -5,10 +5,10 @@ launch_ndvi_workers.py
 Automate launching EC2 workers for the NDVI SQS pipeline.
 
 This is the NDVI equivalent of the Assignment 2 launch_scrapers.py pattern:
-instead of manually clicking in the EC2 console, this script launches N EC2
-instances, attaches the AWS Academy instance profile, creates enough EBS storage,
-installs the Python/raster environment through UserData, creates EBS-backed swap,
-downloads the SQS worker script from S3, and optionally starts the worker in tmux.
+This script launches N EC2 instances, attaches the AWS Academy instance profile, 
+creates enough EBS storage, installs the Python/raster environment through UserData, 
+creates EBS-backed swap, downloads the SQS worker script from S3, and optionally 
+starts the worker in tmux.
 
 Default design:
     SQS queue: us-east-1
@@ -16,18 +16,20 @@ Default design:
     NASA HLS S3: us-west-2
 
 Recommended usage, launch-only:
-    python launch_ndvi_workers.py ^
-      --num-workers 2 ^
-      --instance-type m5.large ^
-      --volume-size-gb 200 ^
-      --swap-gb 32 ^
-      --project-bucket final-project-ndvi ^
-      --queue-url https://sqs.us-east-1.amazonaws.com/891377197146/ndvi-province-tasks
+    python launch_ndvi_workers.py `
+      --num-workers 2 `
+      --instance-type m5.large `
+      --volume-size-gb 100 `
+      --swap-gb 32 `
+      --project-bucket final-project-ndvi `
+      --queue-url https://sqs.us-east-1.amazonaws.com/891377197146/ndvi-province-tasks `
+      --key-name ndvi-key
 
 Then connect to each EC2 instance, configure fresh NASA credentials, and run:
     ~/project/start_worker.sh
 
-Optional fully automatic start:
+** Alternative **
+For fully automatic start:
     Set NASA_ACCESS_KEY_ID, NASA_SECRET_ACCESS_KEY, and NASA_SESSION_TOKEN
     in your local shell, then add --auto-start.
 
@@ -44,13 +46,6 @@ PowerShell example:
       --project-bucket final-project-ndvi `
       --queue-url "https://sqs.us-east-1.amazonaws.com/891377197146/ndvi-province-tasks" `
       --auto-start
-
-Security note:
-    --auto-start embeds the temporary NASA credentials into EC2 UserData and
-    writes them into the EC2 user's AWS profile. This is convenient for an
-    AWS Academy project, but UserData can be viewed by users with EC2
-    permissions. The NASA credentials expire quickly, so this is usually low
-    risk for this coursework setup, but launch-only mode is cleaner.
 """
 
 from __future__ import annotations

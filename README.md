@@ -190,18 +190,18 @@ visualization/
 
 Main NDVI coefficient plots:
 
-[NDVI coefficient: Happiness](visualization/coef_mean_ndvi_happiness.png)
-[NDVI coefficient: Log WTP](visualization/coef_mean_ndvi_ln_wtp_air3.png)
+![NDVI coefficient: Happiness](visualization/coef_mean_ndvi_happiness.png)
+![NDVI coefficient: Log WTP](visualization/coef_mean_ndvi_ln_wtp_air3.png)
 
 Full-control coefficient plots:
 
-[Full-control coefficients: Happiness](visualization/full_controls_coefficients_happiness.png)
-[Full-control coefficients: Log WTP](visualization/full_controls_coefficients_ln_wtp_air3.png)
+![Full-control coefficients: Happiness](visualization/full_controls_coefficients_happiness.png)
+![Full-control coefficients: Log WTP](visualization/full_controls_coefficients_ln_wtp_air3.png)
 
 Province-level scatter plots:
 
-[Province scatter: NDVI and Happiness](visualization/province_scatter_ndvi_happiness.png)
-[Province scatter: NDVI and Log WTP](visualization/province_scatter_ndvi_ln_wtp_air3.png)
+![Province scatter: NDVI and Happiness](visualization/province_scatter_ndvi_happiness.png)
+![Province scatter: NDVI and Log WTP](visualization/province_scatter_ndvi_ln_wtp_air3.png)
 
 Summary coefficient table:
 

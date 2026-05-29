@@ -190,27 +190,22 @@ visualization/
 
 Main NDVI coefficient plots:
 
-- [NDVI coefficient: Happiness](visualization/coef_mean_ndvi_happiness.png)
-- [NDVI coefficient: Log WTP](visualization/coef_mean_ndvi_ln_wtp_air3.png)
+[NDVI coefficient: Happiness](visualization/coef_mean_ndvi_happiness.png)
+[NDVI coefficient: Log WTP](visualization/coef_mean_ndvi_ln_wtp_air3.png)
 
 Full-control coefficient plots:
 
-- [Full-control coefficients: Happiness](visualization/full_controls_coefficients_happiness.png)
-- [Full-control coefficients: Log WTP](visualization/full_controls_coefficients_ln_wtp_air3.png)
-
-Model fit plots:
-
-- [R-squared by specification: Happiness](visualization/r2_by_spec_happiness.png)
-- [R-squared by specification: Log WTP](visualization/r2_by_spec_ln_wtp_air3.png)
+[Full-control coefficients: Happiness](visualization/full_controls_coefficients_happiness.png)
+[Full-control coefficients: Log WTP](visualization/full_controls_coefficients_ln_wtp_air3.png)
 
 Province-level scatter plots:
 
-- [Province scatter: NDVI and Happiness](visualization/province_scatter_ndvi_happiness.png)
-- [Province scatter: NDVI and Log WTP](visualization/province_scatter_ndvi_ln_wtp_air3.png)
+[Province scatter: NDVI and Happiness](visualization/province_scatter_ndvi_happiness.png)
+[Province scatter: NDVI and Log WTP](visualization/province_scatter_ndvi_ln_wtp_air3.png)
 
 Summary coefficient table:
 
-- [Main NDVI coefficient table](visualization/main_ndvi_coefficients_table.csv)
+[Main NDVI coefficient table](visualization/main_ndvi_coefficients_table.csv)
 
 The results are noisy and should be interpreted as descriptive associations rather than causal estimates. The coefficient on NDVI is not statistically significant in the main models, but the signs are substantively reasonable. In the happiness regressions, the NDVI coefficient becomes positive after controls are added, which is confirmed by the scatterplot. This pattern is consistent with the idea that greener provinces may provide environmental amenities, recreational opportunities, and quality-of-life benefits that are positively correlated with subjective well-being. In the willingness-to-pay regressions, the NDVI coefficient is negative or close to zero. This sign is also plausible: respondents in greener places may perceive less need for additional environmental improvement, so their stated willingness to pay for more good-air-quality days may be lower.
 

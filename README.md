@@ -88,11 +88,8 @@ The pipeline is as follows:
 
 
 ```text
-Download NASA HLS-VI NDVI links
-        |
-        v
 Query NASA CMR API
-year = 2018, cloud cover <= 10%
+Search HLS-VI NDVI links: year = 2018, cloud cover <= 10%
         |
         v
 Create province-level NDVI manifests

@@ -32,7 +32,7 @@ def main() -> None:
     parser.add_argument("--bucket", default="final-project-ndvi")
     parser.add_argument("--manifest-prefix", default="manifests")
     parser.add_argument("--output-prefix", default="outputs")
-    parser.add_argument("--script-key", default="scripts/compute_hls_ndvi_by_province.py")
+    parser.add_argument("--script-key", default="scripts/compute_hls_ndvi_by_province_optimized.py")
     parser.add_argument("--boundary-key", default="boundaries/geoBoundaries-CHN-ADM1.geojson")
     parser.add_argument("--year", default=2018, type=int)
     parser.add_argument("--sqs-region", default="us-east-1")

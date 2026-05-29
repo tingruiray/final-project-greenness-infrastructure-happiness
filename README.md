@@ -1,11 +1,30 @@
 # Greenness, Happiness, and Willingness to Pay for the Environment: Evidence from China
 
+
+## 0. Repository Structure
+
+```text
+final-project-greenness-infrastructure-happiness/
+  boundary_data/
+  CGSS2018/
+  code/
+  manifests/
+  ndvi_outputs/
+  regression_data/
+  tasks_csv/
+  visualization/
+  README.md
+```
+
+The repo contains a pipeline to download links of NDVI data from NASA [download_nasa_ndvi.ipynb](download_nasa_ndvi.ipynb) and two key pipelines [complete_ndvi_workflow.ipynb](complete_ndvi_workflow.ipynb) and [launch_emr_prepare_regression.ipynb](launch_emr_prepare_regression.ipynb), which uses scripts stored in `code/`. Key code files include the NDVI processing script, the SQS worker script, the EC2 worker launcher, the task enqueueing script, the EMR regression script, and the visualization script. The final outputs are the regression tables in `regression_data/`, and figures in `visualization/`.
+
+
 ## 1. Research Question and Motivation
 
 A large literature in economics and related fields suggests that the local environment may shape individual well-being. Greener areas may improve quality of life through cleaner air, lower heat exposure, and more pleasant surroundings, while more built-up areas may reflect either better infrastructure and services or greater congestion, pollution, and stress. While studies linking greenness and well-being are prevalent in the west, very few focus on China, which is a particularly interesting because it has experienced rapid urbanization alongside major environmental policy efforts. Additionally, most studies focus on objective health outcomes rather than subjective happiness. To fill in this gap, this project explores the relationship between happiness, greenness, and attitude towards the environment by asking the following research question:
 
 **1. How does local greenness measure influence self-reported happiness in China?**
-**2. What is the relationship between local greenness and people’s willingess to pay for environmental efforts?**
+**2. What is the relationship between local greenness and people’s willingness to pay for environmental efforts?**
 
 The empirical setting combines the China General Social Survey 2018 (CGSS 2018) with satellite-derived greenness measures from NASA Harmonized Landsat and Sentinel-2 vegetation-index products. The main individual-level outcomes are self-reported happiness and willingness to pay for government efforts to increase the number of days with good air quality. The main environmental exposure is annual province-level mean NDVI, a standard satellite-based proxy for vegetation greenness.
 
@@ -17,7 +36,7 @@ This research problem requires scalable computing because the raw environmental 
 
 A non-scalable workflow would require downloading all files manually to a local machine and running the raster computations one province at a time. That approach is fragile for three reasons. First, local storage and memory can become a bottleneck when the number of provinces, dates, and tiles increases. In this project, the satellite-processing pipeline used approximately 17,415 NDVI GeoTIFF items, corresponding to about 34 GB of satellite imagery. Second, NASA temporary S3 credentials expire, so long serial jobs are risky. Third, a manual workflow is difficult to reproduce because it depends on local file movement and ad hoc execution order.
 
-The scalable design used here separates the problem into independent province-level tasks. Each province can be processed separately because the annual NDVI summary for a province depends only on that province’s manifest file, the boundary file, and the common processing script. This “one province = one task” structure is naturally parallelizable. By using S3 for persistent storage, SQS for task scheduling, EC2 workers for distributed raster processing, and EMR Spark for downstream regression, the pipeline can scale beyond a single machine while preserving reproducibility.
+In light of this, this project builds two connected pipelines that are designed to be scalable. First, this project builds an NDVI pipeline that uses SQS queue and EC2 workers to download satellite data and compute annual and provincial NDVI averages. The design separates the problem into independent province-level tasks. Each province can be processed separately because the annual NDVI summary for a province depends only on that province’s manifest file, the boundary file, and the common processing script. This “one province = one task” structure is naturally parallelizable. By using S3 for persistent storage, SQS for task scheduling, EC2 workers for distributed raster processing, the pipeline can scale beyond a single country while preserving reproducibility. For instance, computing NDVI for Asia or the whole world would be feasible with this NDVI pipeline as long as geoboundary data are accessible. Second, this project builds an EMR pipeline that uses EMR Spark for downstream regression after obtaining NDVI data from the first pipeline. The EMR cluster pipeline is scalable because in the EMR stage, Spark distributes the data-processing tasks across multiple executors. Additionally, after the NDVI pipeline produces province-level NDVI outputs in S3, EMR can read both the NDVI files and the CGSS happiness data directly from S3, which separates storage from computation. If the survey dataset becomes larger, or if the project is extended to multiple years, counties, or repeated satellite measures, the same code can scale by increasing the number of EMR core/task nodes rather than rewriting the workflow. 
 
 ## 3. Data Sources and Local cleaning
 
@@ -33,9 +52,9 @@ The core outcomes are:
 - `wtp_air3`: willingness to pay for government efforts to increase the number of good-air-quality days in 2018 by three days, originally CGSS variable `e76b`.
 - `ln_wtp_air3`: log-transformed willingness to pay, defined as `log(wtp_air3 + 1)`.
 
-The environmental input is NASA HLS-VI NDVI, which is stored in NASA's official S3 bucket. The administrative boundary file is the China ADM1 GeoJSON boundary. According to these boundaries, links to HLS-VI NDVI data for each province in 2018 are downloaded and cleaned, keeping only `.NDVI.tif` files. The final regression input combines the cleaned CGSS data with province-level annual NDVI summaries.
+The environmental input is NASA HLS-VI NDVI, which is stored in NASA's official S3 bucket. The administrative boundary file is the China ADM1 GeoJSON boundary. According to these boundaries, links to HLS-VI NDVI data for each province in 2018 are searched and downloaded, keeping only `.NDVI.tif` files. The downloading pipeline is automated by interacting with NASA's public API: [download_nasa_ndvi.ipynb](download_nasa_ndvi.ipynb)
 
-## 4. Testing Workflow
+## 4. Testing NDVI Pipiline
 
 Before running the full distributed pipeline, I tested the NDVI workflow locally and on a single EC2 instance using Shanghai as the pilot case. The testing workflow was designed to validate the geospatial logic before scaling to all provinces. The Earthdata Search download script originally contained about 140 HLS-VI file links for Shanghai in 2018. Since each granule includes multiple vegetation or water indices, I filtered the links to retain only the 14 `.NDVI.tif` files. This produced a Shanghai NDVI manifest that could be used by the processing script.
 
@@ -69,7 +88,7 @@ The pipeline is as follows:
 
 
 ```text
-NASA HLS-VI NDVI data
+Download NASA HLS-VI NDVI links
         |
         v
 Query NASA CMR API
@@ -132,6 +151,8 @@ Regression tables and visualization figures
 
 ## 5.1 Computing Annual Average NDVI for Each Province
 First, local code, province manifests, the boundary GeoJSON, and task CSVs are uploaded to S3. Second, an SQS queue named `ndvi-province-tasks` is created or reused. Each SQS message represents one province-processing job and contains the province name, the year, the manifest S3 path, the boundary S3 path, the processing script S3 path, and the output S3 folder. Third, three EC2 worker instances are launched. Each worker installs the required geospatial Python environment, downloads the worker script, polls the SQS queue, receives one province task, downloads the relevant manifest and boundary file, uses NASA temporary credentials to fetch NDVI GeoTIFFs from the protected NASA S3 bucket, runs the NDVI processing script, uploads daily and annual output CSVs to S3, and deletes the SQS message only after successful completion.
+
+To make the NDVI computation scalable and stable on AWS EC2, I optimized the province-level processing script to avoid loading all satellite tiles into memory at once. The original version, which struggled with larger provinces in the full run, attempted to mosaic all intersecting HLS-VI NDVI rasters for the same date before computing the provincial mean, which was memory-intensive and could fail for large provinces. The optimized script instead processes rasters in smaller spatial blocks and handles tiles by coordinate reference system, reducing peak memory usage and avoiding errors caused by multi-CRS inputs. It computes valid NDVI statistics incrementally by clipping each raster block to the province boundary, excluding invalid or missing pixels, and accumulating valid pixel sums and counts before calculating the final daily and annual averages. This chunk-based design makes the script more robust on limited-memory EC2 instances, allows large provinces with many overlapping satellite scenes to be processed successfully, and preserves the same output structure required by the SQS–EC2–S3 pipeline.
 
 This workflow is documented in:
 [complete_ndvi_workflow.ipynb](complete_ndvi_workflow.ipynb)
@@ -205,24 +226,6 @@ The same design can be extended easily. More years can be added by creating year
 
 ## 8. Conclusion
 In conclusion, this project shows how large-scale computing can make satellite-based social science research feasible and reproducible. By separating the workflow into NASA data discovery, S3 storage, SQS task distribution, EC2-based province-level NDVI processing, and EMR-based regression analysis, the pipeline scales from a single-province test to a full national workflow. Empirically, the estimated relationship between NDVI and survey outcomes is noisy, but the signs are broadly consistent with expectations: higher greenness is associated with higher reported happiness, while respondents in greener provinces appear less willing to pay for additional air-quality improvements. These results should be interpreted as descriptive rather than causal, especially because province-level NDVI is a coarse exposure measure. Still, the project demonstrates a scalable framework that can be extended to more years, finer geographic units, additional environmental indicators, and richer survey outcomes.
-
-## 9. Repository Structure
-
-```text
-final-project-greenness-infrastructure-happiness/
-  boundary_data/
-  CGSS2018/
-  code/
-  manifests/
-  ndvi_outputs/
-  regression_data/
-  satellite_data/
-  tasks_csv/
-  visualization/
-  README.md
-```
-
-Key code files include the NDVI processing script, the SQS worker script, the EC2 worker launcher, the task enqueueing script, the EMR regression script, and the visualization script. The final outputs are the province-level NDVI files, regression tables, and figures in `visualization/`.
 
 
 

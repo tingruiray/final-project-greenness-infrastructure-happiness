@@ -3,14 +3,14 @@ worker_poll_sqs_ndvi_old.py
 
 SQS worker for the province-level HLS-VI NDVI pipeline.
 Uses the older processing script:
-    s3://final-project-ndvi/scripts/compute_hls_ndvi_by_province.py
+    s3://final-project-ndvi/scripts/compute_hls_ndvi_by_province_optimized.py
 
 Worker logic:
     1. Poll SQS for one province task.
     2. Download script, boundary, and manifest from project S3.
     3. Clean Windows CRLF from manifest.
     4. Download NASA HLS-VI NDVI .tif files using the nasa AWS profile.
-    5. Run compute_hls_ndvi_by_province.py.
+    5. Run compute_hls_ndvi_by_province_optimized.py.
     6. Upload outputs to project S3.
     7. Delete the SQS message only after successful completion.
     8. Clean local files.
@@ -135,7 +135,7 @@ def main() -> None:
     parser.add_argument("--visibility-timeout", default=21600, type=int)
     parser.add_argument("--max-empty-polls", default=5, type=int)
     parser.add_argument("--max-tasks", default=None, type=int)
-    parser.add_argument("--script-s3", default="s3://final-project-ndvi/scripts/compute_hls_ndvi_by_province.py")
+    parser.add_argument("--script-s3", default="s3://final-project-ndvi/scripts/compute_hls_ndvi_by_province_optimized.py")
     args = parser.parse_args()
 
     work_root = Path(args.work_root).expanduser()

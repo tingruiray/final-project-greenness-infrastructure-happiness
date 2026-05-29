@@ -1,3 +1,0 @@
-instance_id,state,instance_type,private_ip,public_ip,public_dns,subnet_id,availability_zone
-i-06371ad4a7292a4c4,running,m5.large,172.31.10.181,34.219.99.177,ec2-34-219-99-177.us-west-2.compute.amazonaws.com,subnet-0c33404dac71c5a77,us-west-2c
-i-0d015a6b8269894dd,running,m5.large,172.31.3.246,54.202.169.172,ec2-54-202-169-172.us-west-2.compute.amazonaws.com,subnet-0c33404dac71c5a77,us-west-2c
